@@ -23,12 +23,17 @@ from DomainInfo import DomainInfo
 from ZoneList import ZoneList
 from ZoneUpdate import ZoneUpdate
 from DomainList import DomainList
+from Bild import Bild
+
+bild_subcmd = ['fth', 'nbg', 'both']
+
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-z','--zone', nargs='+', help='<Required> Set flag')
-    parser.add_argument('-d','--domain', nargs='+', help='<Required> Set flag')
-    parser.add_argument('-k','--key', nargs='+', help='<Required> Set flag')
+    parser.add_argument('-z', '--zone', nargs='+', help='<Required> Set flag')
+    parser.add_argument('-d', '--domain', nargs='+',
+                        help='<Required> Set flag')
+    parser.add_argument('-k', '--key', nargs='+', help='<Required> Set flag')
     parser.add_argument('--zone-system_ns', help='Zone System Nameserver')
     parser.add_argument('--rr-name', help='Resource Record Name')
     parser.add_argument('--rr-type', help='Resource Record Type')
@@ -36,10 +41,14 @@ def main():
     parser.add_argument('--rr-value', help='Resource Record Value')
     parser.add_argument('--output_format', help='Specify output format (csv)')
     parser.add_argument('commands', metavar='cmd', nargs='+',
-                        help='commands to operate (zone-list, zone-info, zone-update, domain-list, domain-info)')
+                        help='commands to operate ' +
+                        '(zone-list, zone-info, zone-update, domain-list, ' +
+                        'domain-info, bild [ ' + '| '.join(bild_subcmd) +
+                        '] <domains>))')
     args = parser.parse_args()
 
-    apiClient = ApiClient(os.environ['AUTODNS_USERNAME'], os.environ['AUTODNS_PASSWORD'],
+    apiClient = ApiClient(os.environ['AUTODNS_USERNAME'],
+                          os.environ['AUTODNS_PASSWORD'],
                           os.getenv('AUTODNS_CONTEXT', '4'))
 
     for cmd in args.commands:
@@ -53,6 +62,13 @@ def main():
             DomainList(apiClient).run()
         elif cmd == 'domain-info':
             DomainInfo(apiClient).run(args.domain, args.key)
+        elif cmd == 'bild':
+            if len(args.commands) < 3 or args.commands[1] not in bild_subcmd:
+                sys.exit("bild: second arg must be one of " +
+                         ', '.join(bild_subcmd) + ", followed by domains")
+            for z in args.commands[2:]:
+                Bild(apiClient).run(args.commands[1], z)
+            sys.exit()
         else:
             sys.exit("Unknown command: " + cmd)
 
