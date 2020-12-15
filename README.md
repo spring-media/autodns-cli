@@ -53,7 +53,7 @@ point to any of the UDC origin servers to those at fth, nbg or both.
   asmediaimpact.de
   ```
 
-* Change zones to point to Nuremberg only:
+* Change zones to point to Fürth only:
 
   ```
   $ xargs ./autodns.py bild fth <zones
@@ -71,7 +71,7 @@ point to any of the UDC origin servers to those at fth, nbg or both.
   * ``volkshaftpflichtversicherung.de`` has no records pointing to
     UDC origins
 
-  * ``spobi.de`` already pointed to Nuremberg only (the change is a
+  * ``spobi.de`` already pointed to Fürth only (the change is a
     noop)
 
   * ``asmediaimpact.de`` pointed to both sites and was changed
